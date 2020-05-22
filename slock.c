@@ -36,6 +36,7 @@ enum {
 	INPUT,
 	FAILED,
 	CAPS,
+	BLOCKS,
 	NUMCOLS
 };
 
@@ -198,7 +199,6 @@ static void
 draw_key_magic(Display *dpy, struct lock **locks, int screen)
 {
 	XGCValues gr_values;
-  GC gc;
 
   Window win = locks[screen]->win;
   Window root_win;
@@ -207,22 +207,52 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   unsigned int screen_width, _h, _b, _d;
   XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &_h, &_b, &_d);
 
-  gr_values.background = locks[screen]->colors[FAILED];
-  gc = XCreateGC(dpy, win, GCBackground, &gr_values);
+  gr_values.foreground = locks[screen]->colors[BLOCKS];
+  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
+
+  gr_values.foreground = locks[screen]->colors[INIT];
+  GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
 
   unsigned int block_height = 20;
   unsigned int blocks = 6;
   unsigned int block_width = screen_width / blocks;
   unsigned int position = rand() % blocks;
 
-  XClearWindow(dpy, win);
-  /* XFillRectangle(dpy, win, gc, 0, 0, screen_width, block_height); */
+  XFillRectangle(dpy, win, gcblank, 0, 0, screen_width, block_height + 1);
   XFillRectangle(dpy, win, gc, position * block_width, 0, block_width, block_height);
-  writemessage(dpy, win, screen);
 
   XFreeGC(dpy, gc);
 }
 
+static void
+draw_status(Display *dpy, struct lock **locks, int screen, unsigned int color)
+{
+  Window win = locks[screen]->win;
+  Window root_win;
+
+	XGCValues gr_values;
+  gr_values.foreground = locks[screen]->colors[color];
+  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
+
+  int _x, _y;
+  unsigned int screen_width, _h, _b, _d;
+  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &_h, &_b, &_d);
+
+  unsigned int block_height = 20;
+
+  XFillRectangle(dpy, win, gc, 0, 0, screen_width, block_height);
+
+  XFreeGC(dpy, gc);
+}
+
+static void
+draw_background(Display *dpy, struct lock **locks, int screen)
+{
+  XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[INIT]);
+  
+  XClearWindow(dpy, locks[screen]->win);
+  writemessage(dpy, locks[screen]->win, screen);
+}
 
 
 static const char *
@@ -342,11 +372,8 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 			color = len ? (caps ? CAPS : INPUT) : (failure || failonclear ? FAILED : INIT);
 			if (running && oldc != color) {
 				for (screen = 0; screen < nscreens; screen++) {
-					XSetWindowBackground(dpy,
-					                     locks[screen]->win,
-					                     locks[screen]->colors[color]);
-					XClearWindow(dpy, locks[screen]->win);
-					writemessage(dpy, locks[screen]->win, screen);
+				  draw_background(dpy, locks, screen);
+				  draw_status(dpy, locks, screen, color);
 				}
 				oldc = color;
 			}
