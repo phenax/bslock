@@ -34,10 +34,10 @@ static const char * text_color = "#ffffff";
 static const char * font_name = "-b&h-lucidatypewriter-medium-r-normal-sans-0-0-100-100-m-0-iso10646-1";
 
 // The height of the bar
-static const unsigned int bar_height = 20;
+static const unsigned int bar_height = 15;
 
 // Number of blocks/divisions of the bar for key feedback
-static const unsigned int blocks_count = 10;
+static const unsigned int blocks_count = 20;
 
 // Bar position (BAR_TOP or BAR_BOTTOM)
 static const unsigned int bar_position = BAR_TOP;

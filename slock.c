@@ -218,7 +218,7 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   gr_values.foreground = locks[screen]->colors[INIT];
   GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  unsigned int blocks = 6;
+  unsigned int blocks = blocks_count;
   unsigned int block_width = screen_width / blocks;
   unsigned int position = rand() % blocks;
 
