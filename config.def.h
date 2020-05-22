@@ -15,7 +15,7 @@ static const char *colorname[NUMCOLS] = {
  */
 ResourcePref resources[] = {
 		{ "background",   STRING,  &colorname[INIT] },
-		{ "background",       STRING,  &colorname[INPUT] },
+		{ "background",   STRING,  &colorname[INPUT] },
 		{ "color1",       STRING,  &colorname[FAILED] },
 		{ "color3",       STRING,  &colorname[CAPS] },
 		{ "color5",       STRING,  &colorname[BLOCKS] },
@@ -34,7 +34,7 @@ static const char * text_color = "#ffffff";
 static const char * font_name = "-b&h-lucidatypewriter-medium-r-normal-sans-0-0-100-100-m-0-iso10646-1";
 
 // The height of the bar
-static const unsigned int bar_height = 15;
+static const unsigned int bar_height = 10;
 
 // Number of blocks/divisions of the bar for key feedback
 static const unsigned int blocks_count = 20;
