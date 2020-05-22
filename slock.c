@@ -194,6 +194,35 @@ writemessage(Display *dpy, Window win, int screen)
 			XFree(xsi);
 }
 
+static void
+draw_key_magic(Display *dpy, struct lock **locks, int screen)
+{
+	XGCValues gr_values;
+  GC gc;
+
+  Window win = locks[screen]->win;
+  Window root_win;
+
+  int _x, _y;
+  unsigned int screen_width, _h, _b, _d;
+  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &_h, &_b, &_d);
+
+  gr_values.background = locks[screen]->colors[FAILED];
+  gc = XCreateGC(dpy, win, GCBackground, &gr_values);
+
+  unsigned int block_height = 20;
+  unsigned int blocks = 6;
+  unsigned int block_width = screen_width / blocks;
+  unsigned int position = rand() % blocks;
+
+  XClearWindow(dpy, win);
+  /* XFillRectangle(dpy, win, gc, 0, 0, screen_width, block_height); */
+  XFillRectangle(dpy, win, gc, position * block_width, 0, block_width, block_height);
+  writemessage(dpy, win, screen);
+
+  XFreeGC(dpy, gc);
+}
+
 
 
 static const char *
@@ -305,6 +334,9 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					memcpy(passwd + len, buf, num);
 					len += num;
 				}
+				for (screen = 0; screen < nscreens; screen++) {
+          draw_key_magic(dpy, locks, screen);
+        }
 				break;
 			}
 			color = len ? (caps ? CAPS : INPUT) : (failure || failonclear ? FAILED : INIT);
