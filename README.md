@@ -1,5 +1,5 @@
 # bslock - simple screen locker
-A better simple screen locker utility for X
+A better simple screen locker utility for X (Fork of slock)
 
 ## How is it different from slock
 * A clean keypress feedback
