@@ -2,3 +2,5 @@
 slock
 tags
 config.h
+*.orig
+*.rej

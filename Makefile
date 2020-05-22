@@ -6,7 +6,7 @@ include config.mk
 SRC = slock.c ${COMPATSRC}
 OBJ = ${SRC:.c=.o}
 
-all: options slock
+all: clean options slock
 
 options:
 	@echo slock build options:
@@ -31,6 +31,7 @@ slock: ${OBJ}
 clean:
 	@echo cleaning
 	@rm -f slock ${OBJ} slock-${VERSION}.tar.gz
+	@rm -f config.h
 
 dist: clean
 	@echo creating dist tarball
