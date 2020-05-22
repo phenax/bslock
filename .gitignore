@@ -1,0 +1,4 @@
+*.o
+slock
+tags
+config.h
