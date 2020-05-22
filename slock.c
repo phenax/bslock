@@ -249,7 +249,7 @@ static void
 draw_background(Display *dpy, struct lock **locks, int screen)
 {
   XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[INIT]);
-  
+
   XClearWindow(dpy, locks[screen]->win);
   writemessage(dpy, locks[screen]->win, screen);
 }
@@ -547,6 +547,9 @@ main(int argc, char **argv) {
 	int i, s, nlocks, nscreens;
 	int count_fonts;
 	char **font_names;
+
+  time_t t;
+	srand((unsigned) time(&t));
 
 	ARGBEGIN {
 	case 'v':
