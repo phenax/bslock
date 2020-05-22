@@ -40,6 +40,11 @@ enum {
 	NUMCOLS
 };
 
+enum {
+  BAR_TOP,
+  BAR_BOTTOM,
+};
+
 struct lock {
 	int screen;
 	Window root, win;
@@ -204,8 +209,8 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   Window root_win;
 
   int _x, _y;
-  unsigned int screen_width, _h, _b, _d;
-  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &_h, &_b, &_d);
+  unsigned int screen_width, screen_height, _b, _d;
+  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
 
   gr_values.foreground = locks[screen]->colors[BLOCKS];
   GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
@@ -213,13 +218,15 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   gr_values.foreground = locks[screen]->colors[INIT];
   GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  unsigned int block_height = 20;
   unsigned int blocks = 6;
   unsigned int block_width = screen_width / blocks;
   unsigned int position = rand() % blocks;
 
-  XFillRectangle(dpy, win, gcblank, 0, 0, screen_width, block_height + 1);
-  XFillRectangle(dpy, win, gc, position * block_width, 0, block_width, block_height);
+  unsigned startx = 0;
+  unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
+
+  XFillRectangle(dpy, win, gcblank, startx, starty, screen_width, bar_height + 1);
+  XFillRectangle(dpy, win, gc, startx + position*block_width, starty, block_width, bar_height);
 
   XFreeGC(dpy, gc);
 }
@@ -235,12 +242,13 @@ draw_status(Display *dpy, struct lock **locks, int screen, unsigned int color)
   GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
   int _x, _y;
-  unsigned int screen_width, _h, _b, _d;
-  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &_h, &_b, &_d);
+  unsigned int screen_width, screen_height, _b, _d;
+  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
 
-  unsigned int block_height = 20;
+  unsigned startx = 0;
+  unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
 
-  XFillRectangle(dpy, win, gc, 0, 0, screen_width, block_height);
+  XFillRectangle(dpy, win, gc, startx, starty, screen_width, bar_height + 1);
 
   XFreeGC(dpy, gc);
 }
@@ -373,6 +381,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 			if (running && oldc != color) {
 				for (screen = 0; screen < nscreens; screen++) {
 				  draw_background(dpy, locks, screen);
+				  draw_key_magic(dpy, locks, screen); // TODO: Place it somewhere else
 				  draw_status(dpy, locks, screen, color);
 				}
 				oldc = color;
