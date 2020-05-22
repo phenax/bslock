@@ -32,6 +32,7 @@ char *argv0;
 int count_error = 0;
 
 enum {
+	BG,
 	INIT,
 	INPUT,
 	FAILED,
@@ -215,7 +216,7 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   gr_values.foreground = locks[screen]->colors[BLOCKS];
   GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  gr_values.foreground = locks[screen]->colors[INIT];
+  gr_values.foreground = locks[screen]->colors[BG];
   GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
 
   unsigned int blocks = blocks_count;
@@ -256,7 +257,7 @@ draw_status(Display *dpy, struct lock **locks, int screen, unsigned int color)
 static void
 draw_background(Display *dpy, struct lock **locks, int screen)
 {
-  XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[INIT]);
+  XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[BG]);
 
   XClearWindow(dpy, locks[screen]->win);
   writemessage(dpy, locks[screen]->win, screen);
@@ -371,17 +372,21 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 				    (len + num < sizeof(passwd))) {
 					memcpy(passwd + len, buf, num);
 					len += num;
+
+          // Not in failure state after typing
+          failure = 0;
+
+          for (screen = 0; screen < nscreens; screen++) {
+            draw_key_magic(dpy, locks, screen);
+          }
 				}
-				for (screen = 0; screen < nscreens; screen++) {
-          draw_key_magic(dpy, locks, screen);
-        }
 				break;
 			}
 			color = len ? (caps ? CAPS : INPUT) : (failure || failonclear ? FAILED : INIT);
 			if (running && oldc != color) {
 				for (screen = 0; screen < nscreens; screen++) {
 				  draw_background(dpy, locks, screen);
-				  draw_key_magic(dpy, locks, screen); // TODO: Place it somewhere else
+				  draw_key_magic(dpy, locks, screen);
 				  draw_status(dpy, locks, screen, color);
 				}
 				oldc = color;
@@ -432,7 +437,7 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
 
 	/* init */
 	wa.override_redirect = 1;
-	wa.background_pixel = lock->colors[INIT];
+	wa.background_pixel = lock->colors[BG];
 	lock->win = XCreateWindow(dpy, lock->root, 0, 0,
 	                          DisplayWidth(dpy, lock->screen),
 	                          DisplayHeight(dpy, lock->screen),

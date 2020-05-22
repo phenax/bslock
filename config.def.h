@@ -3,6 +3,7 @@ static const char *user  = "nobody";
 static const char *group = "nobody";
 
 static const char *colorname[NUMCOLS] = {
+	[BG] =     "#111111",    /* after initialization */
 	[INIT] =     "#111111",    /* after initialization */
 	[INPUT] =    "#5180e9",    /* during input */
 	[FAILED] =   "#CC3333",    /* wrong password */
@@ -14,7 +15,8 @@ static const char *colorname[NUMCOLS] = {
  * Xresources preferences to load at startup
  */
 ResourcePref resources[] = {
-		{ "background",   STRING,  &colorname[INIT] },
+		{ "background",   STRING,  &colorname[BG] },
+		{ "color0",       STRING,  &colorname[INIT] },
 		{ "color5",       STRING,  &colorname[INPUT] },
 		{ "color1",       STRING,  &colorname[FAILED] },
 		{ "color3",       STRING,  &colorname[CAPS] },
