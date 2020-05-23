@@ -3,7 +3,7 @@ static const char *user  = "nobody";
 static const char *group = "nobody";
 
 static const char *colorname[NUMCOLS] = {
-	[BG] =     "#111111",    /* after initialization */
+	[BG] =       "#111111",    /* after initialization */
 	[INIT] =     "#111111",    /* after initialization */
 	[INPUT] =    "#5180e9",    /* during input */
 	[FAILED] =   "#CC3333",    /* wrong password */
@@ -32,7 +32,7 @@ static const char * message = "What's the password, dipshit?";
 /* text color */
 static const char * text_color = "#00ff00";
 
-/* text size (must be a valid size) */
+/* font */
 static const char * font_name = "-bitstream-terminal-medium-r-normal--0-0-120-130-c-0-iso8859-1";
 // static const char * font_name = "-b&h-lucidatypewriter-medium-r-normal-sans-0-0-120-130-m-0-iso10646-1";
 // static const char * font_name = "-b&h-lucida-medium-r-normal-sans-0-0-120-130-p-0-iso10646-1";
