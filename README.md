@@ -1,6 +1,8 @@
 # bslock - simple screen locker
 A better simple screen locker utility for X (Fork of slock)
 
+![bslock demo](./media/demo.gif)
+
 ## How is it different from slock
 * A clean keypress feedback
 * Xresources patch
@@ -27,5 +29,4 @@ Edit config.mk to match your local setup if needed (bslock is installed into the
 
 ## Running bslock
 Simply invoke the 'bslock' command. To get out of it, enter your password.
-
 
