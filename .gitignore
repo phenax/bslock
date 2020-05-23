@@ -1,5 +1,5 @@
 *.o
-slock
+bslock
 tags
 config.h
 *.orig

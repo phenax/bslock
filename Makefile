@@ -1,4 +1,4 @@
-# slock - simple screen locker
+# bslock - simple screen locker
 # See LICENSE file for copyright and license details.
 
 include config.mk
@@ -6,10 +6,10 @@ include config.mk
 SRC = slock.c ${COMPATSRC}
 OBJ = ${SRC:.c=.o}
 
-all: clean options slock
+all: clean options bslock
 
 options:
-	@echo slock build options:
+	@echo bslock build options:
 	@echo "CFLAGS   = ${CFLAGS}"
 	@echo "LDFLAGS  = ${LDFLAGS}"
 	@echo "CC       = ${CC}"
@@ -24,13 +24,13 @@ config.h:
 	@echo creating $@ from config.def.h
 	@cp config.def.h $@
 
-slock: ${OBJ}
+bslock: ${OBJ}
 	@echo CC -o $@
 	@${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
 	@echo cleaning
-	@rm -f slock ${OBJ} slock-${VERSION}.tar.gz
+	@rm -f bslock ${OBJ} slock-${VERSION}.tar.gz
 	@rm -f config.h
 
 dist: clean
@@ -45,18 +45,18 @@ dist: clean
 install: all
 	@echo installing executable file to ${DESTDIR}${PREFIX}/bin
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
-	@cp -f slock ${DESTDIR}${PREFIX}/bin
-	@chmod 755 ${DESTDIR}${PREFIX}/bin/slock
-	@chmod u+s ${DESTDIR}${PREFIX}/bin/slock
+	@cp -f bslock ${DESTDIR}${PREFIX}/bin
+	@chmod 755 ${DESTDIR}${PREFIX}/bin/bslock
+	@chmod u+s ${DESTDIR}${PREFIX}/bin/bslock
 	@echo installing manual page to ${DESTDIR}${MANPREFIX}/man1
 	@mkdir -p ${DESTDIR}${MANPREFIX}/man1
-	@sed "s/VERSION/${VERSION}/g" <slock.1 >${DESTDIR}${MANPREFIX}/man1/slock.1
-	@chmod 644 ${DESTDIR}${MANPREFIX}/man1/slock.1
+	@sed "s/VERSION/${VERSION}/g" <bslock.1 >${DESTDIR}${MANPREFIX}/man1/bslock.1
+	@chmod 644 ${DESTDIR}${MANPREFIX}/man1/bslock.1
 
 uninstall:
 	@echo removing executable file from ${DESTDIR}${PREFIX}/bin
-	@rm -f ${DESTDIR}${PREFIX}/bin/slock
+	@rm -f ${DESTDIR}${PREFIX}/bin/bslock
 	@echo removing manual page from ${DESTDIR}${MANPREFIX}/man1
-	@rm -f ${DESTDIR}${MANPREFIX}/man1/slock.1
+	@rm -f ${DESTDIR}${MANPREFIX}/man1/bslock.1
 
 .PHONY: all options clean dist install uninstall
