@@ -3,28 +3,29 @@ A better simple screen locker utility for X (Fork of slock)
 
 ## How is it different from slock
 * A clean keypress feedback
-* Background image support (work in progress)
 * Xresources patch
 * Caps lock patch
 * Display text patch
-
-
-## Requirements
-In order to build slock you need the Xlib header files.
+* Background image support (work in progress)
 
 
 ## Installation
-Edit config.mk to match your local setup (slock is installed into
-the /usr/local namespace by default).
 
-Afterwards enter the following command to build and install slock
-(if necessary as root):
+### From AUR
+Arch users can install [bslock](https://aur.archlinux.org/packages/bslock/) from AUR.
 ```bash
-make install
+yay -S bslock
+# OR
+yaourt bslock
 ```
 
+### Install it directly
+You can clone this repository and install it by running `make install`. You may have to use sudo.
+In order to build bslock you need the Xlib header files.
+Edit config.mk to match your local setup if needed (bslock is installed into the /usr/local namespace by default).
 
-## Running slock
-Simply invoke the 'slock' command. To get out of it, enter your password.
+
+## Running bslock
+Simply invoke the 'bslock' command. To get out of it, enter your password.
 
 
