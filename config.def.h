@@ -17,10 +17,10 @@ static const char *colorname[NUMCOLS] = {
 ResourcePref resources[] = {
 		{ "background",   STRING,  &colorname[BG] },
 		{ "color0",       STRING,  &colorname[INIT] },
-		{ "color10",       STRING,  &colorname[INPUT] },
+		{ "accent",       STRING,  &colorname[INPUT] },
 		{ "color1",       STRING,  &colorname[FAILED] },
 		{ "color3",       STRING,  &colorname[CAPS] },
-		{ "color10",       STRING,  &colorname[BLOCKS] },
+		{ "accent",       STRING,  &colorname[BLOCKS] },
 };
 
 /* treat a cleared input like a wrong password (color) */
@@ -30,7 +30,7 @@ static const int failonclear = 0;
 static const char * message = "What's the password, dipshit?";
 
 /* text color */
-static const char * text_color = "#20bf6b";
+static const char * text_color = "#00ff00";
 
 /* font */
 static const char * font_name = "-bitstream-terminal-medium-r-normal--0-0-120-130-c-0-iso8859-1";
