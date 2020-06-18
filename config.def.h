@@ -30,7 +30,7 @@ static const int failonclear = 0;
 static const char * message = "What's the password, dipshit?";
 
 /* text color */
-static const char * text_color = "#00ff00";
+static const char * text_color = "#4e3aA3";
 
 /* font */
 static const char * font_name = "-bitstream-terminal-medium-r-normal--0-0-120-130-c-0-iso8859-1";
