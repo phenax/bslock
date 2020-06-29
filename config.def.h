@@ -33,9 +33,7 @@ static const char * message = "What's the password, dipshit?";
 static const char * text_color = "#4e3aA3";
 
 /* font */
-static const char * font_name = "-bitstream-terminal-medium-r-normal--0-0-120-130-c-0-iso8859-1";
-// static const char * font_name = "-b&h-lucidatypewriter-medium-r-normal-sans-0-0-120-130-m-0-iso10646-1";
-// static const char * font_name = "-b&h-lucida-medium-r-normal-sans-0-0-120-130-p-0-iso10646-1";
+static const char * font_name = "-misc-cozettevector-medium-r-normal--0-0-130-130-p-0-iso10646-1";
 
 // The height of the bar
 static const unsigned int bar_height = 15;
