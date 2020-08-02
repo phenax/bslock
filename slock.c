@@ -96,22 +96,21 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
 	gr_values.foreground = locks[screen]->colors[BLOCKS];
 	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-	int width = bar_width,
-			height = bar_height;
-	if (bar_height == 0 || bar_width == 0) {
+	int width = blocks_width,
+			height = blocks_height;
+	if (blocks_height == 0 || blocks_width == 0) {
 		int _x, _y;
 		unsigned int screen_width, screen_height, _b, _d;
 		XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
-		width = bar_width ? bar_width : screen_width;
-		height = bar_height ? bar_height : screen_height;
+		width = blocks_width ? blocks_width : screen_width;
+		height = blocks_height ? blocks_height : screen_height;
 	}
 
-	unsigned int blocks = bar_blocks;
-	unsigned int block_width = width / blocks;
-	unsigned int position = rand() % blocks;
+	unsigned int block_width = width / blocks_count;
+	unsigned int position = rand() % blocks_count;
 
 	XClearWindow(dpy, win);
-	XFillRectangle(dpy, win, gc, bar_x + position*block_width, bar_y, block_width, bar_height);
+	XFillRectangle(dpy, win, gc, blocks_x + position*block_width, blocks_y, block_width, blocks_height);
 
 	XFreeGC(dpy, gc);
 }
@@ -218,9 +217,8 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					memcpy(passwd + len, buf, num);
 					len += num;
 				}
-        for (screen = 0; screen < nscreens; screen++) {
-          draw_key_feedback(dpy, locks, screen);
-        }
+				for (screen = 0; screen < nscreens; screen++)
+					draw_key_feedback(dpy, locks, screen);
 				break;
 			}
 			color = len ? INPUT : ((failure || failonclear) ? FAILED : INIT);
