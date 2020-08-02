@@ -90,33 +90,33 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
 {
 	XGCValues gr_values;
 
-  Window win = locks[screen]->win;
-  Window root_win;
+	Window win = locks[screen]->win;
+	Window root_win;
 
-  gr_values.foreground = locks[screen]->colors[BLOCKS];
-  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
+	gr_values.foreground = locks[screen]->colors[BLOCKS];
+	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  int width = bar_width,
-      height = bar_height;
-  if (bar_height == 0 || bar_width == 0) {
-    int _x, _y;
-    unsigned int screen_width, screen_height, _b, _d;
-    XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
-    width = bar_width ? bar_width : screen_width;
-    height = bar_height ? bar_height : screen_height;
-  }
+	int width = bar_width,
+			height = bar_height;
+	if (bar_height == 0 || bar_width == 0) {
+		int _x, _y;
+		unsigned int screen_width, screen_height, _b, _d;
+		XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
+		width = bar_width ? bar_width : screen_width;
+		height = bar_height ? bar_height : screen_height;
+	}
 
-  unsigned int blocks = bar_blocks;
-  unsigned int block_width = width / blocks;
-  unsigned int position = rand() % blocks;
+	unsigned int blocks = bar_blocks;
+	unsigned int block_width = width / blocks;
+	unsigned int position = rand() % blocks;
 
-  XClearWindow(dpy, win);
-  XFillRectangle(dpy, win, gc, bar_x + position*block_width, bar_y, block_width, bar_height);
+	XClearWindow(dpy, win);
+	XFillRectangle(dpy, win, gc, bar_x + position*block_width, bar_y, block_width, bar_height);
 
-  XFreeGC(dpy, gc);
+	XFreeGC(dpy, gc);
 }
 
-static const char *
+	static const char *
 gethash(void)
 {
 	const char *hash;
@@ -391,8 +391,8 @@ main(int argc, char **argv) {
 	if (setuid(duid) < 0)
 		die("slock: setuid: %s\n", strerror(errno));
 
-  time_t t;
-  srand((unsigned) time(&t));
+	time_t t;
+	srand((unsigned) time(&t));
 
 
 	/* check for Xrandr support */
