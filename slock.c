@@ -91,11 +91,8 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
   Window win = locks[screen]->win;
   Window root_win;
 
-  gr_values.foreground = locks[screen]->colors[INPUT];
-  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
-
   gr_values.foreground = locks[screen]->colors[INIT];
-  GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
+  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
   int width = bar_width,
       height = bar_height;
@@ -111,7 +108,7 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
   unsigned int block_width = width / blocks;
   unsigned int position = rand() % blocks;
 
-  XFillRectangle(dpy, win, gcblank, bar_x, bar_y, width, bar_height + 1);
+  XClearWindow(dpy, win);
   XFillRectangle(dpy, win, gc, bar_x + position*block_width, bar_y, block_width, bar_height);
 
   XFreeGC(dpy, gc);
