@@ -10,3 +10,11 @@ static const char *colorname[NUMCOLS] = {
 
 /* treat a cleared input like a wrong password (color) */
 static const int failonclear = 1;
+
+static short int enable_bar = 1;
+static const int bar_width = 0;
+static const int bar_height = 30;
+static const int bar_x = 0;
+static const int bar_y = 0;
+static const int bar_blocks = 10;
+
