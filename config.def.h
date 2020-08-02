@@ -16,7 +16,7 @@ static const int failonclear = 1;
 // ### Blocks bar ###
 static short int blocks_enabled = 1; // 0 = don't show blocks
 static const int blocks_width = 0; // 0 = full width
-static const int blocks_height = 16; // 0 = full height
+static const int blocks_height = 16;
 
 // position
 static const int blocks_x = 0;
