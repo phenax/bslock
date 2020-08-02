@@ -217,8 +217,9 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					memcpy(passwd + len, buf, num);
 					len += num;
 				}
-				for (screen = 0; screen < nscreens; screen++)
-					draw_key_feedback(dpy, locks, screen);
+				if (blocks_enabled)
+					for (screen = 0; screen < nscreens; screen++)
+						draw_key_feedback(dpy, locks, screen);
 				break;
 			}
 			color = len ? INPUT : ((failure || failonclear) ? FAILED : INIT);
