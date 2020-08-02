@@ -28,7 +28,8 @@ enum {
 	INIT,
 	INPUT,
 	FAILED,
-	NUMCOLS
+	BLOCKS,
+	NUMCOLS,
 };
 
 struct lock {
@@ -91,7 +92,7 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
   Window win = locks[screen]->win;
   Window root_win;
 
-  gr_values.foreground = locks[screen]->colors[INIT];
+  gr_values.foreground = locks[screen]->colors[BLOCKS];
   GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
   int width = bar_width,
