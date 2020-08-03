@@ -98,7 +98,7 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
 
 	int width = blocks_width,
 			height = blocks_height;
-	if (blocks_height == 0 || blocks_width == 0) {
+	if (blocks_width == 0) {
 		int _x, _y;
 		unsigned int screen_width, screen_height, _b, _d;
 		XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
@@ -110,7 +110,7 @@ draw_key_feedback(Display *dpy, struct lock **locks, int screen)
 	unsigned int position = rand() % blocks_count;
 
 	XClearWindow(dpy, win);
-	XFillRectangle(dpy, win, gc, blocks_x + position*block_width, blocks_y, block_width, blocks_height);
+	XFillRectangle(dpy, win, gc, blocks_x + position*block_width, blocks_y, block_width, height);
 
 	XFreeGC(dpy, gc);
 }
