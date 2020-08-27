@@ -42,8 +42,8 @@ enum {
 };
 
 enum {
-  BAR_TOP,
-  BAR_BOTTOM,
+	BAR_TOP,
+	BAR_BOTTOM,
 };
 
 struct lock {
@@ -133,12 +133,13 @@ writemessage(Display *dpy, Window win, int screen)
 
 	tab_size = 8 * XTextWidth(fontinfo, " ", 1);
 
-	XAllocNamedColor(dpy, DefaultColormap(dpy, screen),
-		 text_color, &color, &dummy);
+	XAllocNamedColor(
+		dpy, DefaultColormap(dpy, screen), text_color, &color, &dummy
+	);
 
 	gr_values.font = fontinfo->fid;
 	gr_values.foreground = color.pixel;
-	gc=XCreateGC(dpy,win,GCFont+GCForeground, &gr_values);
+	gc = XCreateGC(dpy, win, GCFont+GCForeground, &gr_values);
 
 	/*  To prevent "Uninitialized" warnings. */
 	xsi = NULL;
@@ -187,7 +188,10 @@ writemessage(Display *dpy, Window win, int screen)
 				j++;
 			}
 
-			XDrawString(dpy, win, gc, width + tab_size*tab_replace, height + 20*k, message + j, i - j);
+			XDrawString(
+				dpy, win, gc, width + tab_size*tab_replace,
+				height + 20*k, message + j, i - j
+			);
 			while (i < len && message[i] == '\n') {
 				i++;
 				j = i;
@@ -198,69 +202,73 @@ writemessage(Display *dpy, Window win, int screen)
 
 	/* xsi should not be NULL anyway if Xinerama is active, but to be safe */
 	if (XineramaIsActive(dpy) && xsi != NULL)
-			XFree(xsi);
+		XFree(xsi);
 }
 
-static void
-draw_key_magic(Display *dpy, struct lock **locks, int screen)
+unsigned int
+draw_key_magic(Display *dpy, struct lock **locks, int screen, unsigned int block_prev_pos)
 {
 	XGCValues gr_values;
 
-  Window win = locks[screen]->win;
-  Window root_win;
+	Window win = locks[screen]->win;
+	Window root_win;
 
-  int _x, _y;
-  unsigned int screen_width, screen_height, _b, _d;
-  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
+	int _x, _y;
+	unsigned int screen_width, screen_height, _b, _d;
+	XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
 
-  gr_values.foreground = locks[screen]->colors[BLOCKS];
-  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
+	gr_values.foreground = locks[screen]->colors[BLOCKS];
+	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  gr_values.foreground = locks[screen]->colors[BG];
-  GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
+	gr_values.foreground = locks[screen]->colors[BG];
+	GC gcblank = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  unsigned int blocks = blocks_count;
-  unsigned int block_width = screen_width / blocks;
-  unsigned int position = rand() % blocks;
+	unsigned int blocks = blocks_count;
+	unsigned int block_width = screen_width / blocks;
+	unsigned int position = rand() % blocks;
 
-  unsigned startx = 0;
-  unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
+	while (position == block_prev_pos) position = rand() % blocks;
+	block_prev_pos = position;
 
-  XFillRectangle(dpy, win, gcblank, startx, starty, screen_width, bar_height + 1);
-  XFillRectangle(dpy, win, gc, startx + position*block_width, starty, block_width, bar_height);
+	unsigned startx = 0;
+	unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
 
-  XFreeGC(dpy, gc);
+	XFillRectangle(dpy, win, gcblank, startx, starty, screen_width, bar_height + 1);
+	XFillRectangle(dpy, win, gc, startx + position*block_width, starty, block_width, bar_height);
+
+	XFreeGC(dpy, gc);
+	return block_prev_pos;
 }
 
 static void
 draw_status(Display *dpy, struct lock **locks, int screen, unsigned int color)
 {
-  Window win = locks[screen]->win;
-  Window root_win;
+	Window win = locks[screen]->win;
+	Window root_win;
 
 	XGCValues gr_values;
-  gr_values.foreground = locks[screen]->colors[color];
-  GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
+	gr_values.foreground = locks[screen]->colors[color];
+	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-  int _x, _y;
-  unsigned int screen_width, screen_height, _b, _d;
-  XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
+	int _x, _y;
+	unsigned int screen_width, screen_height, _b, _d;
+	XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
 
-  unsigned startx = 0;
-  unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
+	unsigned startx = 0;
+	unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
 
-  XFillRectangle(dpy, win, gc, startx, starty, screen_width, bar_height + 1);
+	XFillRectangle(dpy, win, gc, startx, starty, screen_width, bar_height + 1);
 
-  XFreeGC(dpy, gc);
+	XFreeGC(dpy, gc);
 }
 
 static void
 draw_background(Display *dpy, struct lock **locks, int screen)
 {
-  XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[BG]);
+	XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[BG]);
 
-  XClearWindow(dpy, locks[screen]->win);
-  writemessage(dpy, locks[screen]->win, screen);
+	XClearWindow(dpy, locks[screen]->win);
+	writemessage(dpy, locks[screen]->win, screen);
 }
 
 
@@ -315,6 +323,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 	unsigned int len, color, indicators;
 	KeySym ksym;
 	XEvent ev;
+	unsigned int block_prev_pos = 0;
 
 	len = 0;
 	caps = 0;
@@ -373,21 +382,25 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					memcpy(passwd + len, buf, num);
 					len += num;
 
-          // Not in failure state after typing
-          failure = 0;
+					// Not in failure state after typing
+					failure = 0;
 
-          for (screen = 0; screen < nscreens; screen++) {
-            draw_key_magic(dpy, locks, screen);
-          }
+					for (screen = 0; screen < nscreens; screen++) {
+						block_prev_pos = draw_key_magic(
+							dpy, locks, screen, block_prev_pos
+						);
+					}
 				}
 				break;
 			}
 			color = len ? (caps ? CAPS : INPUT) : (failure || failonclear ? FAILED : INIT);
 			if (running && oldc != color) {
 				for (screen = 0; screen < nscreens; screen++) {
-				  draw_background(dpy, locks, screen);
-				  draw_key_magic(dpy, locks, screen);
-				  draw_status(dpy, locks, screen, color);
+					draw_background(dpy, locks, screen);
+					block_prev_pos = draw_key_magic(
+						dpy, locks, screen, block_prev_pos
+					);
+					draw_status(dpy, locks, screen, color);
 				}
 				oldc = color;
 			}
@@ -397,11 +410,15 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 				if (locks[screen]->win == rre->window) {
 					if (rre->rotation == RR_Rotate_90 ||
 					    rre->rotation == RR_Rotate_270)
-						XResizeWindow(dpy, locks[screen]->win,
-						              rre->height, rre->width);
+						XResizeWindow(
+							dpy, locks[screen]->win,
+							rre->height, rre->width
+						);
 					else
-						XResizeWindow(dpy, locks[screen]->win,
-						              rre->width, rre->height);
+						XResizeWindow(
+							dpy, locks[screen]->win,
+							rre->width, rre->height
+						);
 					XClearWindow(dpy, locks[screen]->win);
 					break;
 				}
@@ -430,37 +447,46 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
 	lock->root = RootWindow(dpy, lock->screen);
 
 	for (i = 0; i < NUMCOLS; i++) {
-		XAllocNamedColor(dpy, DefaultColormap(dpy, lock->screen),
-		                 colorname[i], &color, &dummy);
+		XAllocNamedColor(
+			dpy, DefaultColormap(dpy, lock->screen),
+			colorname[i], &color, &dummy
+		);
 		lock->colors[i] = color.pixel;
 	}
 
 	/* init */
 	wa.override_redirect = 1;
 	wa.background_pixel = lock->colors[BG];
-	lock->win = XCreateWindow(dpy, lock->root, 0, 0,
-	                          DisplayWidth(dpy, lock->screen),
-	                          DisplayHeight(dpy, lock->screen),
-	                          0, DefaultDepth(dpy, lock->screen),
-	                          CopyFromParent,
-	                          DefaultVisual(dpy, lock->screen),
-	                          CWOverrideRedirect | CWBackPixel, &wa);
+	lock->win = XCreateWindow(
+		dpy, lock->root, 0, 0,
+		DisplayWidth(dpy, lock->screen),
+		DisplayHeight(dpy, lock->screen),
+		0, DefaultDepth(dpy, lock->screen),
+		CopyFromParent,
+		DefaultVisual(dpy, lock->screen),
+		CWOverrideRedirect | CWBackPixel, &wa
+	);
 	lock->pmap = XCreateBitmapFromData(dpy, lock->win, curs, 8, 8);
-	invisible = XCreatePixmapCursor(dpy, lock->pmap, lock->pmap,
-	                                &color, &color, 0, 0);
+	invisible = XCreatePixmapCursor(
+		dpy, lock->pmap, lock->pmap, &color, &color, 0, 0
+	);
 	XDefineCursor(dpy, lock->win, invisible);
 
 	/* Try to grab mouse pointer *and* keyboard for 600ms, else fail the lock */
 	for (i = 0, ptgrab = kbgrab = -1; i < 6; i++) {
 		if (ptgrab != GrabSuccess) {
-			ptgrab = XGrabPointer(dpy, lock->root, False,
-			                      ButtonPressMask | ButtonReleaseMask |
-			                      PointerMotionMask, GrabModeAsync,
-			                      GrabModeAsync, None, invisible, CurrentTime);
+			ptgrab = XGrabPointer(
+				dpy, lock->root, False,
+				ButtonPressMask | ButtonReleaseMask |
+				PointerMotionMask, GrabModeAsync,
+				GrabModeAsync, None, invisible, CurrentTime
+			);
 		}
 		if (kbgrab != GrabSuccess) {
-			kbgrab = XGrabKeyboard(dpy, lock->root, True,
-			                       GrabModeAsync, GrabModeAsync, CurrentTime);
+			kbgrab = XGrabKeyboard(
+				dpy, lock->root, True,
+				GrabModeAsync, GrabModeAsync, CurrentTime
+			);
 		}
 
 		/* input is grabbed: we can lock the screen */
@@ -549,7 +575,8 @@ usage(void)
 }
 
 int
-main(int argc, char **argv) {
+main(int argc, char **argv)
+{
 	struct xrandr rr;
 	struct lock **locks;
 	struct passwd *pwd;
@@ -562,7 +589,7 @@ main(int argc, char **argv) {
 	int count_fonts;
 	char **font_names;
 
-  time_t t;
+	time_t t;
 	srand((unsigned) time(&t));
 
 	ARGBEGIN {
@@ -575,7 +602,9 @@ main(int argc, char **argv) {
 	case 'f':
 		if (!(dpy = XOpenDisplay(NULL)))
 			die("slock: cannot open display\n");
-		font_names = XListFonts(dpy, "*", 10000 /* list 10000 fonts*/, &count_fonts);
+		font_names = XListFonts(
+			dpy, "*", 10000 /* list 10000 fonts*/, &count_fonts
+		);
 		for (i=0; i<count_fonts; i++) {
 			fprintf(stderr, "%s\n", *(font_names+i));
 		}
