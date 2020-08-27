@@ -201,8 +201,8 @@ writemessage(Display *dpy, Window win, int screen)
 			XFree(xsi);
 }
 
-static void
-draw_key_magic(Display *dpy, struct lock **locks, int screen)
+unsigned int
+draw_key_magic(Display *dpy, struct lock **locks, int screen, unsigned int block_prev_pos)
 {
 	XGCValues gr_values;
 
@@ -223,6 +223,9 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   unsigned int block_width = screen_width / blocks;
   unsigned int position = rand() % blocks;
 
+  while (position == block_prev_pos) position = rand() % blocks;
+  block_prev_pos = position;
+
   unsigned startx = 0;
   unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
 
@@ -230,6 +233,7 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen)
   XFillRectangle(dpy, win, gc, startx + position*block_width, starty, block_width, bar_height);
 
   XFreeGC(dpy, gc);
+  return block_prev_pos;
 }
 
 static void
@@ -315,6 +319,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 	unsigned int len, color, indicators;
 	KeySym ksym;
 	XEvent ev;
+	unsigned int block_prev_pos = 0;
 
 	len = 0;
 	caps = 0;
@@ -373,12 +378,12 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					memcpy(passwd + len, buf, num);
 					len += num;
 
-          // Not in failure state after typing
-          failure = 0;
+					// Not in failure state after typing
+					failure = 0;
 
-          for (screen = 0; screen < nscreens; screen++) {
-            draw_key_magic(dpy, locks, screen);
-          }
+					for (screen = 0; screen < nscreens; screen++) {
+					  block_prev_pos = draw_key_magic(dpy, locks, screen, block_prev_pos);
+					}
 				}
 				break;
 			}
@@ -386,7 +391,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 			if (running && oldc != color) {
 				for (screen = 0; screen < nscreens; screen++) {
 				  draw_background(dpy, locks, screen);
-				  draw_key_magic(dpy, locks, screen);
+				  block_prev_pos = draw_key_magic(dpy, locks, screen, block_prev_pos);
 				  draw_status(dpy, locks, screen, color);
 				}
 				oldc = color;
