@@ -1,25 +1,13 @@
 # bslock - simple screen locker
 A better simple screen locker utility for X (Fork of slock)
 
-![bslock demo](./media/demo.gif)
-
 ## How is it different from slock
 * A clean keypress feedback
 * Xresources patch
 * Caps lock patch
 * Display text patch
-* Background image support (work in progress)
+* Show the last key action's time as a privacy feature
 
-
-## Installation
-
-### From AUR
-Arch users can install [bslock](https://aur.archlinux.org/packages/bslock/) from AUR.
-```bash
-yay -S bslock
-# OR
-yaourt bslock
-```
 
 ### Install it directly
 You can clone this repository and install it by running `make install`. You may have to use sudo.

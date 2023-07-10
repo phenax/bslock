@@ -29,11 +29,14 @@ static const int failonclear = 0;
 /* default message */
 static const char * message = "What's the password, dipshit?";
 
+/* Time format to show when was the device touched */
+static const char * time_format = "%Y/%m/%d %H:%M:%S";
+
 /* text color */
-static const char * text_color = "#4e3aA3";
+static const char * text_color = "#20c20e";
 
 /* font */
-static const char * font_name = "-misc-cozettevector-medium-r-normal--0-0-130-130-p-0-iso10646-1";
+static const char * font_name = "lucidasanstypewriter-24";
 
 // The height of the bar
 static const unsigned int bar_height = 15;
@@ -42,4 +45,4 @@ static const unsigned int bar_height = 15;
 static const unsigned int blocks_count = 10;
 
 // Bar position (BAR_TOP or BAR_BOTTOM)
-static const unsigned int bar_position = BAR_TOP;
+static const unsigned int bar_position = BAR_BOTTOM;
