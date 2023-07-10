@@ -29,6 +29,9 @@ static const int failonclear = 0;
 /* default message */
 static const char * message = "What's the password, dipshit?";
 
+/* Time format to show when was the device touched */
+static const char * time_format = "%Y/%m/%d %H:%M:%S";
+
 /* text color */
 static const char * text_color = "#4e3aA3";
 

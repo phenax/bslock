@@ -8,6 +8,7 @@ A better simple screen locker utility for X (Fork of slock)
 * Xresources patch
 * Caps lock patch
 * Display text patch
+* Show the last login attempt
 * Background image support (work in progress)
 
 
