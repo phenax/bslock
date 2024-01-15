@@ -116,8 +116,13 @@ static void
 writemessage(Display *dpy, Window win, int screen)
 {
 	int len, line_len, width, height, s_width, s_height, i, j, k, tab_replace, tab_size;
-	/* Time releated */
+	/* Time related */
 	int time_height, time_width;
+	/* Username related*/
+	int usr_height, usr_width;
+	char *username;
+	username=(char *)malloc(10*sizeof(char));
+	username=getlogin();
 
 	XGCValues gr_values;
 	XFontStruct *fontinfo;
@@ -204,8 +209,8 @@ writemessage(Display *dpy, Window win, int screen)
 		}
 	}
 
-	/* Print the time when the devices was locked */
-	char lock_msg[100] = "Last attempt ";
+	/* Print the time of last login attempt */
+	char lock_msg[100] = "Last attempt at ";
 	char formated_time[100];
 
 	time_t current_time;
@@ -220,6 +225,20 @@ writemessage(Display *dpy, Window win, int screen)
 	XDrawString(
 				dpy, win, gc, time_width,
 				time_height, lock_msg, strlen(lock_msg)
+			);
+
+	/* Print username */
+	char usr_msg[100] = "Login as ";
+
+	current_time = time(NULL);
+	strcat(usr_msg, username);
+
+	usr_height = s_height-bar_height-(bar_height/2);
+	usr_width = 0; //XTextWidth(fontinfo, usr_msg, strlen(usr_msg));
+
+	XDrawString(
+				dpy, win, gc, usr_width,
+				usr_height, usr_msg, strlen(usr_msg)
 			);
 
 	/* xsi should not be NULL anyway if Xinerama is active, but to be safe */
