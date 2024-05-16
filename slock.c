@@ -72,6 +72,8 @@ typedef struct {
 	void *dst;
 } ResourcePref;
 
+time_t locktime;
+
 #include "config.h"
 
 static void
@@ -88,6 +90,7 @@ die(const char *errstr, ...)
 #ifdef __linux__
 #include <fcntl.h>
 #include <linux/oom.h>
+#include <time.h>
 
 static void
 dontkillme(void)
@@ -115,6 +118,13 @@ static void
 writemessage(Display *dpy, Window win, int screen)
 {
 	int len, line_len, width, height, s_width, s_height, i, j, k, tab_replace, tab_size;
+	/* Lock time related */
+	int lock_time_height, lock_time_width;
+	/* Time related */
+	int time_height, time_width;
+	/* Username related*/
+	int usr_height, usr_width;
+
 	XGCValues gr_values;
 	XFontStruct *fontinfo;
 	XColor color, dummy;
@@ -199,6 +209,52 @@ writemessage(Display *dpy, Window win, int screen)
 			}
 		}
 	}
+
+	/* Print the lock time */
+	char lock_time_msg[100] = "Locked at ";
+	char formated_lock_time[100];
+
+	strftime(formated_lock_time, sizeof(formated_lock_time), time_format, localtime(&locktime));
+	strcat(lock_time_msg, formated_lock_time);
+
+	lock_time_height = s_height-bar_height*4;
+	lock_time_width = s_width - XTextWidth(fontinfo, lock_time_msg, strlen(lock_time_msg))-10;
+
+	XDrawString(
+				dpy, win, gc, lock_time_width,
+				lock_time_height, lock_time_msg, strlen(lock_time_msg)
+			);
+
+	/* Print the time of last login attempt */
+	char lock_msg[100] = "Last attempt at ";
+	char formated_time[100];
+
+	time_t current_time;
+
+	current_time = time(NULL);
+	strftime(formated_time, sizeof(formated_time), time_format, localtime(&current_time));
+	strcat(lock_msg, formated_time);
+
+	time_height = s_height-bar_height*2;
+	time_width = s_width - XTextWidth(fontinfo, lock_msg, strlen(lock_msg))-10;
+
+	XDrawString(
+				dpy, win, gc, time_width,
+				time_height, lock_msg, strlen(lock_msg)
+			);
+
+	/* Print username */
+	char usr_msg[100] = "Login as ";
+
+	strcat(usr_msg, user);
+
+	usr_height = s_height-bar_height*2;
+	usr_width = 10;
+
+	XDrawString(
+				dpy, win, gc, usr_width,
+				usr_height, usr_msg, strlen(usr_msg)
+			);
 
 	/* xsi should not be NULL anyway if Xinerama is active, but to be safe */
 	if (XineramaIsActive(dpy) && xsi != NULL)
@@ -591,6 +647,8 @@ main(int argc, char **argv)
 
 	time_t t;
 	srand((unsigned) time(&t));
+
+	locktime = time(NULL);
 
 	ARGBEGIN {
 	case 'v':
