@@ -22,6 +22,7 @@
 #include <X11/Xutil.h>
 #include <X11/XKBlib.h>
 #include <X11/Xresource.h>
+#include <time.h>
 
 #include "arg.h"
 #include "util.h"
@@ -211,11 +212,19 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen, unsigned int block
 	XGCValues gr_values;
 
 	Window win = locks[screen]->win;
-	Window root_win;
+	/* Window root_win; */
 
-	int _x, _y;
-	unsigned int screen_width, screen_height, _b, _d;
-	XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
+	unsigned int screen_width, screen_height;
+	if (XineramaIsActive(dpy)) {
+		int i;
+		XineramaScreenInfo *xsi  = XineramaQueryScreens(dpy, &i);
+		screen_width = xsi[0].width;
+		screen_height = xsi[0].height;
+		XFree(xsi);
+	} else {
+		screen_width = DisplayWidth(dpy, screen);
+		screen_height = DisplayHeight(dpy, screen);
+	}
 
 	gr_values.foreground = locks[screen]->colors[BLOCKS];
 	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
@@ -231,7 +240,7 @@ draw_key_magic(Display *dpy, struct lock **locks, int screen, unsigned int block
 	block_prev_pos = position;
 
 	unsigned startx = 0;
-	unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
+	unsigned starty = bar_position == BAR_TOP ? bar_offset : screen_height - bar_offset - bar_height;
 
 	XFillRectangle(dpy, win, gcblank, startx, starty, screen_width, bar_height + 1);
 	XFillRectangle(dpy, win, gc, startx + position*block_width, starty, block_width, bar_height);
@@ -244,18 +253,25 @@ static void
 draw_status(Display *dpy, struct lock **locks, int screen, unsigned int color)
 {
 	Window win = locks[screen]->win;
-	Window root_win;
 
 	XGCValues gr_values;
 	gr_values.foreground = locks[screen]->colors[color];
 	GC gc = XCreateGC(dpy, win, GCForeground, &gr_values);
 
-	int _x, _y;
-	unsigned int screen_width, screen_height, _b, _d;
-	XGetGeometry(dpy, win, &root_win, &_x, &_y, &screen_width, &screen_height, &_b, &_d);
+	unsigned int screen_width, screen_height;
+	if (XineramaIsActive(dpy)) {
+		int i;
+		XineramaScreenInfo *xsi  = XineramaQueryScreens(dpy, &i);
+		screen_width = xsi[0].width;
+		screen_height = xsi[0].height;
+		XFree(xsi);
+	} else {
+		screen_width = DisplayWidth(dpy, screen);
+		screen_height = DisplayHeight(dpy, screen);
+	}
 
 	unsigned startx = 0;
-	unsigned starty = bar_position == BAR_TOP ? 0 : screen_height - bar_height;
+	unsigned starty = bar_position == BAR_TOP ? bar_offset : screen_height - bar_offset - bar_height;
 
 	XFillRectangle(dpy, win, gc, startx, starty, screen_width, bar_height + 1);
 
